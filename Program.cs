@@ -10,7 +10,7 @@ namespace PersonnelAccounting
             bool isCorrect = int.TryParse(Console.ReadLine(), out value);
             while (isCorrect == false)
             {
-                Console.Write("Неерный ввод. Повторите еще раз: ");
+                Console.Write("Неверный ввод. Повторите еще раз: ");
                 isCorrect = int.TryParse(Console.ReadLine(), out value);
             }
             return value;
