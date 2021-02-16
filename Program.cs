@@ -35,6 +35,45 @@ namespace PersonnelAccounting
             return choice;
         }
 
+        static void RemoveDossier(List<string> fullNames, List<string> positions)
+        {
+            Console.Write("Введите ФИО работника, которого хотите удалить: ");
+            string removableName = Console.ReadLine();
+            List<int> repeatedNumbers = GetIndexesOfDuplicate(fullNames, removableName);
+            if (repeatedNumbers.Count == 0)
+            {
+                Console.WriteLine("Работник с таким именем не найден!");
+            }
+            else if (repeatedNumbers.Count == 1)
+            {
+                Console.WriteLine($"Досье {fullNames[repeatedNumbers[0]]} - {positions[repeatedNumbers[0]]} удалено.");
+                fullNames.RemoveAt(repeatedNumbers[0]);
+                positions.RemoveAt(repeatedNumbers[0]);
+            }
+            else
+            {
+                Console.WriteLine("Найдено несколько повторов. Выберите какой хотите удалить. ");
+                for (int i = 0; i < repeatedNumbers.Count; i++)
+                {
+                    Console.WriteLine($"{i + 1}. {fullNames[repeatedNumbers[i]]} - {positions[repeatedNumbers[i]]}");
+                }
+                int choiceOfRemove = ReadChoiceOfRemove(repeatedNumbers.Count);
+                fullNames.RemoveAt(choiceOfRemove - 1);
+                positions.RemoveAt(choiceOfRemove - 1);
+            }
+            repeatedNumbers.Clear();
+        }
+
+        static int ReadChoiceOfRemove(int maxNumber)
+        {
+            int choiceOfRemove = ReadInt();
+            while (choiceOfRemove <= 0 || choiceOfRemove > maxNumber)
+            {
+                Console.Write("Неверный ввод. Повторите попытку: ");
+                choiceOfRemove = ReadInt();
+            }
+            return choiceOfRemove;
+        }
         static void InitWorker(out string fullName, out string position)
         {
             Console.Write("Введите ФИО работника: ");
@@ -43,7 +82,7 @@ namespace PersonnelAccounting
             position = Console.ReadLine();
         }
 
-        static List<int> GetListOfNumbersOfDuplicateName(List<string> fullNames, string word)
+        static List<int> GetIndexesOfDuplicate(List<string> fullNames, string word)
         {
             List<int> repeatedNumbers = new List<int>();
             for (int i = 0; i < fullNames.Count; i++)
@@ -58,9 +97,8 @@ namespace PersonnelAccounting
 
         static void Main(string[] args)
         {
-            Dictionary<string, string> workers = new Dictionary<string, string>();
             List<string> fullNames = new List<string>();
-            List<string> positons = new List<string>();
+            List<string> positions = new List<string>();
             bool exit = false;
             int choice;
             while (exit == false)
@@ -71,51 +109,18 @@ namespace PersonnelAccounting
                 switch (choice)
                 {
                     case 1:
-                        string newFullName;
-                        string newPosition;
-                        InitWorker(out newFullName, out newPosition);
+                        InitWorker(out string newFullName, out string newPosition);
                         fullNames.Add(newFullName);
-                        positons.Add(newPosition);
+                        positions.Add(newPosition);
                         break;
                     case 2:
                         for (int i = 0; i < fullNames.Count; i++)
                         {
-                            Console.WriteLine($"ФИО - {fullNames[i]}, должность - {positons[i]}");
+                            Console.WriteLine($"ФИО - {fullNames[i]}, должность - {positions[i]}");
                         }
                         break;
                     case 3:
-                        string removableName;
-                        Console.Write("Введите ФИО работника, которого хотите удалить: ");
-                        removableName = Console.ReadLine();
-                        List <int> repeatedNumbers = new List<int>();
-                        repeatedNumbers = GetListOfNumbersOfDuplicateName(fullNames, removableName);
-                        if (repeatedNumbers.Count == 0)
-                        {
-                            Console.WriteLine("Работник с таким именем не найден!");
-                        }
-                        else if(repeatedNumbers.Count == 1)
-                        {
-                            Console.WriteLine($"Досье {fullNames[repeatedNumbers[0]]} - {positons[repeatedNumbers[0]]} удалено.");
-                            fullNames.RemoveAt(repeatedNumbers[0]);
-                            positons.RemoveAt(repeatedNumbers[0]);
-                        }
-                        else
-                        {
-                            Console.WriteLine("Найдено несколько повторов. Выберите какой хотите удалить: ");
-                            for (int i = 0; i < repeatedNumbers.Count; i++)
-                            {
-                                Console.WriteLine($"{i + 1}. {fullNames[repeatedNumbers[i]]} - {positons[repeatedNumbers[i]]}");
-                            }
-                            int choiceOfRemove = ReadInt();
-                            while (choiceOfRemove <= 0 || choiceOfRemove > repeatedNumbers.Count)
-                            {
-                                Console.Write("Неверный ввод. Повторите попытку: ");
-                                choiceOfRemove = ReadInt();
-                            }
-                            fullNames.RemoveAt(choiceOfRemove - 1);
-                            positons.RemoveAt(choiceOfRemove - 1);
-                        }
-                        repeatedNumbers.Clear();
+                        RemoveDossier(fullNames, positions);
                         break;
                     case 4:
                         exit = true;
